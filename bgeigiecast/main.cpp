@@ -38,7 +38,11 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
 #ifndef UNIT_TEST
 
+#ifndef ARDUINO_M5STACK_Core2
 #include <Arduino.h>
+#else
+#include <M5Core2.h>
+#endif
 
 #include "bluetooth_reporter.h"
 #include "api_connector.h"
@@ -64,7 +68,9 @@ ApiReporter api_reporter(config);
 AccessPoint access_point(config);
 
 // Report handlers
+#ifndef ARDUINO_M5STACK_Core2
 ModeLED mode_led(config);
+#endif
 
 #if DEBUG_FULL_REPORT
 #if ENABLE_DEBUG
@@ -92,8 +98,10 @@ class FullReporter : public Supervisor {
         "  - state: %d, status: %d\n"
         "- api_reporter\n"
         "  - state: %d, status: %d\n",
+#ifndef ARDUINO_M5STACK_Core2
         worker_stats.at(k_worker_bgeigie_connector).active_state,
         worker_stats.at(k_worker_bgeigie_connector).status,
+#endif
         worker_stats.at(k_worker_configuration_server).active_state,
         worker_stats.at(k_worker_configuration_server).status,
         handler_stats.at(k_handler_controller_handler).active_state,
@@ -115,6 +123,7 @@ FullReporter full_reporter;
 void setup() {
   DEBUG_BEGIN(SERIAL_BAUD);
 
+#ifndef ARDUINO_M5STACK_Core2
   /// Hardware configurations
   // Start serial connection to bGeigie controller
   bGeigieSerialConnection.begin(BGEIGIE_CONNECTION_BAUD);
@@ -129,18 +138,23 @@ void setup() {
   };
   gpio_config(&io_conf);
   gpio_install_isr_service(ESP_INTR_FLAG_LEVEL1);
+#endif
 
   /// Software configurations
   // Setup aggregator
   controller.register_worker(access_point, false);
+#ifndef ARDUINO_M5STACK_Core2
   controller.register_worker(bgeigie_connector, false);
+#endif
   controller.register_worker(config_server, false);
 
   controller.register_handler(bluetooth_reporter, false);
   controller.register_handler(api_reporter, false);
   controller.register_handler(config, false);
 
+#ifndef ARDUINO_M5STACK_Core2
   controller.register_supervisor(mode_led);
+#endif
 #if DEBUG_FULL_REPORT
 #if ENABLE_DEBUG
   controller.register_supervisor(full_reporter);
@@ -151,7 +165,9 @@ void setup() {
 
 void loop() {
   controller.run();
+#ifndef ARDUINO_M5STACK_Core2
   mode_led.loop();
+#endif
 }
 
 #endif

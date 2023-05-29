@@ -4,14 +4,20 @@
 #include <Handler.hpp>
 #include <Aggregator.hpp>
 
+#ifndef ARDUINO_M5STACK_Core2
 #include "button.h"
+#endif
+
 #include "sm_context.h"
 #include "local_storage.h"
 
 /**
  * Main controller for the system, implements state machine to run
  */
+class Controller : public Context, public Aggregator, private Handler, private Worker<bool> {
+#ifndef ARDUINO_M5STACK_Core2
 class Controller : private ButtonObserver, public Context, public Aggregator, private Handler, private Worker<bool> {
+#endif
  public:
 
   typedef enum {
@@ -32,10 +38,12 @@ class Controller : private ButtonObserver, public Context, public Aggregator, pr
    */
   void run() override;
 
+#ifndef ARDUINO_M5STACK_Core2
   /**
    * Callback for the button
    */
   void on_button_pressed(Button* button, uint32_t millis) override;
+#endif
 
   /**
    * override set state from context, to flag worker that change has been made
@@ -71,7 +79,9 @@ class Controller : private ButtonObserver, public Context, public Aggregator, pr
   void initialize();
 
   LocalStorage& _config;
+#ifndef ARDUINO_M5STACK_Core2
   Button _mode_button;
+#endif
   bool _state_changed;
 
   friend class InitializeState;

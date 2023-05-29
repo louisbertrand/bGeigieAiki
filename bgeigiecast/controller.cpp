@@ -5,13 +5,17 @@
 #define BUTTON_LONG_PRESSED_MILLIS_TRESHOLD 4000
 
 Controller::Controller(LocalStorage& config) :
+#ifndef ARDUINO_M5STACK_Core2
     ButtonObserver(),
+#endif
     Context(),
     Aggregator(),
     Handler(k_handler_controller_handler),
     Worker<bool>(k_worker_controller_state_changer, false, 0),
     _config(config),
+#ifndef ARDUINO_M5STACK_Core2
     _mode_button(MODE_BUTTON_PIN),
+#endif
     _state_changed(false) {
 }
 
@@ -25,8 +29,10 @@ void Controller::run() {
 }
 
 void Controller::initialize() {
+#ifndef ARDUINO_M5STACK_Core2
   _mode_button.activate();
   _mode_button.set_observer(this);
+#endif
 
   register_handler(*this, true);
   register_worker(*this, true);
@@ -36,6 +42,7 @@ void Controller::initialize() {
   schedule_event(Event_enum::e_c_controller_initialized);
 }
 
+#ifndef ARDUINO_M5STACK_Core2
 void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
   if(button->get_pin() == MODE_BUTTON_PIN) {
     if(millis_pressed > BUTTON_LONG_PRESSED_MILLIS_TRESHOLD) {
@@ -47,6 +54,7 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
     }
   }
 }
+#endif
 
 void Controller::reset_system() {
   _config.reset_defaults();
