@@ -183,7 +183,7 @@ void setup() {
 }
 
 void loop() {
-  DEBUG_PRINTF("millis=%d ", millis()); DEBUG_PRINTLN("Entering main.loop()"); DEBUG_FLUSH();
+  // DEBUG_PRINTF("millis=%d ", millis()); DEBUG_PRINTLN("Entering main.loop()"); DEBUG_FLUSH();
   controller.run();
 #ifndef ARDUINO_M5STACK_Core2  /// @todo refresh the output graphics display
   mode_led.loop();

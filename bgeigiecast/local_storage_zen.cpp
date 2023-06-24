@@ -4,6 +4,7 @@
 #include "identifiers.h"
 #include "reading.h"
 #include "controller.h"
+#include "data_collector.h"
 #include <cstring>
 
 #define D_SAVED_STATE Controller::k_savable_MobileMode
@@ -366,7 +367,7 @@ bool LocalStorage::activate(bool) {
 
 int8_t LocalStorage::handle_produced_work(const worker_status_t& worker_reports) {
   // Get reading data to store
-  const auto& reader = worker_reports.at(k_worker_bgeigie_connector);
+  const auto& reader = worker_reports.at(k_worker_data_collector);
   if(reader.is_fresh()) {
     const auto& reading = reader.get<Reading>();
     set_device_id(reading.get_device_id(), false);
