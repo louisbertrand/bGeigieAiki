@@ -49,17 +49,29 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 #include "access_point.h"
 #include "debugger.h"
 #include "controller.h"
-#include "bgeigie_connector.h"
-#include "configuration_server.h"
-#include "mode_led.h"
 
+#ifdef ARDUINO_M5STACK_Core2
+#include "data_collector.h"
+#else
+#include "bgeigie_connector.h"
+#include "mode_led.h"
+#endif
+
+#include "configuration_server.h"
+
+#ifndef ARDUINO_M5STACK_Core2
 HardwareSerial& bGeigieSerialConnection = Serial2;
+#endif 
 
 LocalStorage config;
 Controller controller(config);
 
 // Workers
+#ifdef ARDUINO_M5STACK_Core2
+DataCollector data_collector{}; // parameter(s) TBD
+#else
 BGeigieConnector bgeigie_connector(bGeigieSerialConnection);
+#endif 
 ConfigWebServer config_server(config);
 
 // Data handlers
@@ -101,6 +113,9 @@ class FullReporter : public Supervisor {
 #ifndef ARDUINO_M5STACK_Core2
         worker_stats.at(k_worker_bgeigie_connector).active_state,
         worker_stats.at(k_worker_bgeigie_connector).status,
+#else
+        worker_stats.at(k_worker_data_collector).active_state,
+        worker_stats.at(k_worker_data_collector).status,
 #endif
         worker_stats.at(k_worker_configuration_server).active_state,
         worker_stats.at(k_worker_configuration_server).status,
@@ -117,8 +132,9 @@ class FullReporter : public Supervisor {
 };
 FullReporter full_reporter;
 
-#endif
-#endif
+#endif // DEBUG_FULL_REPORT
+#endif // ENABLE_DEBUG
+
 
 void setup() {
   DEBUG_BEGIN(SERIAL_BAUD);
@@ -145,6 +161,8 @@ void setup() {
   controller.register_worker(access_point, false);
 #ifndef ARDUINO_M5STACK_Core2
   controller.register_worker(bgeigie_connector, false);
+#else
+  controller.register_worker(data_collector, false);  // what does the second parameter do?
 #endif
   controller.register_worker(config_server, false);
 
@@ -152,7 +170,7 @@ void setup() {
   controller.register_handler(api_reporter, false);
   controller.register_handler(config, false);
 
-#ifndef ARDUINO_M5STACK_Core2
+#ifndef ARDUINO_M5STACK_Core2  /// @todo register the output graphics display
   controller.register_supervisor(mode_led);
 #endif
 #if DEBUG_FULL_REPORT
@@ -161,11 +179,13 @@ void setup() {
 #endif
 #endif
   controller.setup_state_machine();
+  DEBUG_PRINTF("millis=%d ", millis()); DEBUG_PRINTLN("Exiting main.setup()"); DEBUG_FLUSH();
 }
 
 void loop() {
+  DEBUG_PRINTF("millis=%d ", millis()); DEBUG_PRINTLN("Entering main.loop()"); DEBUG_FLUSH();
   controller.run();
-#ifndef ARDUINO_M5STACK_Core2
+#ifndef ARDUINO_M5STACK_Core2  /// @todo refresh the output graphics display
   mode_led.loop();
 #endif
 }

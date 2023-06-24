@@ -9,10 +9,11 @@ InitializeState::InitializeState(Controller& context) : ControllerState(context)
 }
 
 void InitializeState::entry_action() {
-  DEBUG_PRINTLN("-- Entered state Initialize");
+  DEBUG_PRINTF("millis=%d ", millis()); DEBUG_PRINTLN("In InitializeState::entry_action(), entered state Initialize.");
 }
 
 void InitializeState::do_activity() {
+  DEBUG_PRINTF("millis=%d ", millis()); DEBUG_PRINTLN("In InitializeState::do_activity(), calling controller.initialize()");
   controller.initialize();
 }
 
@@ -23,6 +24,7 @@ void InitializeState::exit_action() {
 void InitializeState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_c_controller_initialized: {
+  DEBUG_PRINTF("millis=%d ", millis()); DEBUG_PRINTLN("In InitializeState::handle_event(e_c_controller_initialized)"); DEBUG_FLUSH();
       controller.set_state(new InitReadingState(controller));
       break;
     }
@@ -40,17 +42,18 @@ InitReadingState::InitReadingState(Controller& context) : ControllerState(contex
 }
 
 void InitReadingState::entry_action() {
-  DEBUG_PRINTLN("-- Entered state Initialize reading");
+  DEBUG_PRINTF("millis=%d, In InitReadingState::entry_action(), entered state InitReadingState %x.\n", millis(), this); DEBUG_FLUSH();
 }
 
 void InitReadingState::do_activity() {
 }
 
 void InitReadingState::exit_action() {
-
+  DEBUG_PRINTF("millis=%d ", millis()); DEBUG_PRINTLN("In InitReadingState::exit_action(), exiting state InitReadingState."); DEBUG_FLUSH();
 }
 
 void InitReadingState::handle_event(Event_enum event_id) {
+  DEBUG_PRINTF("millis=%d ", millis()); DEBUG_PRINTF("In InitReadingState::handle_event(), event_id = %d.\n", event_id);DEBUG_FLUSH();
   switch(event_id) {
     case e_c_reading_initialized: {
       if(_button_pressed) {

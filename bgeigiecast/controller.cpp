@@ -36,8 +36,14 @@ void Controller::initialize() {
 
   register_handler(*this, true);
   register_worker(*this, true);
+  DEBUG_PRINTLN("In Controller::initialize(), calling set_handler_active(k_handler_storage_handler, true)");
   set_handler_active(k_handler_storage_handler, true);
+  DEBUG_PRINTLN("In Controller::initialize(), calling set_worker_active(k_worker_bgeigie_connector, true)");
+#ifdef ARDUINO_M5STACK_Core2
+  set_worker_active(k_worker_data_collector, true);
+#else
   set_worker_active(k_worker_bgeigie_connector, true);
+#endif
 
   schedule_event(Event_enum::e_c_controller_initialized);
 }
@@ -73,7 +79,11 @@ Controller::SavableState Controller::get_saved_state() {
 int8_t Controller::handle_produced_work(const worker_status_t& worker_reports) {
   auto current_state = get_current_state()->get_state_id();
   if(current_state == ControllerState::k_state_InitReadingState) {
+#ifdef ARDUINO_M5STACK_Core2
+    if(worker_reports.at(k_worker_data_collector).is_fresh()) {
+#else
     if(worker_reports.at(k_worker_bgeigie_connector).is_fresh()) {
+#endif
       schedule_event(e_c_reading_initialized);
     }
   }

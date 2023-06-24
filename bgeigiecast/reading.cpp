@@ -1,3 +1,5 @@
+/// @todo Replace strcpy, sprintf with strncpy, snprintf for bounded string creation
+
 #include <string.h>
 #include <stdio.h>
 #include <math.h>

@@ -41,6 +41,7 @@ class Reading {
    * @param out: output param
    * @param fixed: if the device is in fixed mode, it will add 60000 to the device id
    * @return: succes / not
+   * @todo Parameter "fixed" is not implemented, is it needed?
    */
   bool as_json(char* out = nullptr);
 

@@ -1,0 +1,50 @@
+Rebooting...
+millis=479 In Context::set_state, current State* is 0, new State* is 3ffbb868.
+millis=486 In Context::set_state, State* is 3ffbb868 and calling entry_action().
+millis=493 In InitializeState::entry_action(), entered state Initialize.
+millis=493 In Context::set_state, State* is 3ffbb868 and returning from entry_action().
+millis=507 Exiting main.setup()
+millis=510 Entering main.loop()
+millis=513 In Context::run, State* is 3ffbb868 and calling do_activity().
+millis=519 In InitializeState::do_activity(), calling controller.initialize()
+In Controller::initialize(), calling set_handler_active(k_handler_storage_handler, true)
+In Aggregator::set_handler_active(), calling handlers.at(handler_id)->set_active(active, report.handler_stats.at(handler_id))
+Entered LocalStorage::activate
+Calling _memory.begin(bgzen-data, false)
+Calling _memory.getBytesLength(config),returned 56,sizeof(ConfigData) is 56
+Calling _memory.getBytes(SETUP_KEY_CONFIG, &_config, sizeof(ConfigData))
+Calling _memory.getBytes(SETUP_KEY_DOSE, &_dose, sizeof(DoseData))
+Returning true from LocalStorage::activate(bool)
+In Controller::initialize(), calling set_worker_active(k_worker_bgeigie_connector, true)
+millis=574 In Context::run, calling handle_events().
+millis=587 In Context::handle_events, State* is 3ffbb868 and checking event_queue.
+millis=594 In Context::handle_events, State* is 3ffbb868 and calling _current_state->handle_event(2).
+millis=603 In InitializeState::handle_event(e_c_controller_initialized)
+millis=609 In Context::set_state, current State* is 3ffbb868, new State* is 3ffbb92c.
+millis=617 In Context::set_state, State* is 3ffbb868 and calling exit_action().
+millis=624 In Context::set_state, State* is 3ffbb868 and executing delete _current_state.
+millis=632 In Context::set_state, State* is 3ffbb92c and calling entry_action().
+millis=639, In InitReadingState::entry_action(), entered state InitReadingState 3ffbb92c.
+millis=647 In Context::set_state, State* is 3ffbb92c and returning from entry_action().
+
+abort() was called at PC 0x401fd6d7 on core 1
+
+
+Backtrace: 0x4008390d:0x3ffd0f40 0x40095ee1:0x3ffd0f60 0x4009b979:0x3ffd0f80 0x401fd6d7:0x3ffd1000 0x401fd71e:0x3ffd1020 0x401fd67f:0x3ffd1040 0x401fe85f:0x3ffd1060 0x400d72d2:0x3ffd1080 0x400d72e4:0x3ffd10b0 0x4021ae76:0x3ffd10d0 0x400d3b19:0x3ffd10f0 0x400d72fb:0x3ffd1130 0x400d7f5e:0x3ffd1150 0x400f2f59:0x3ffd1170  
+
+  #0  0x4008390d:0x3ffd0f40 in panic_abort at /Users/ficeto/Desktop/ESP32/ESP32S2/esp-idf-public/components/esp_system/panic.c:408
+  #1  0x40095ee1:0x3ffd0f60 in esp_system_abort at /Users/ficeto/Desktop/ESP32/ESP32S2/esp-idf-public/components/esp_system/esp_system.c:137
+  #2  0x4009b979:0x3ffd0f80 in abort at /Users/ficeto/Desktop/ESP32/ESP32S2/esp-idf-public/components/newlib/abort.c:46
+  #3  0x401fd6d7:0x3ffd1000 in __cxxabiv1::__terminate(void (*)()) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/libsupc++/eh_terminate.cc:47
+  #4  0x401fd71e:0x3ffd1020 in std::terminate() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/libsupc++/eh_terminate.cc:57
+  #5  0x401fd67f:0x3ffd1040 in __cxa_throw at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/libsupc++/eh_throw.cc:95
+  #6  0x401fe85f:0x3ffd1060 in std::__throw_out_of_range(char const*) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++11/functexcept.cc:82 (discriminator 2)
+  #7  0x400d72d2:0x3ffd1080 in std::map<unsigned char, WorkerStatus, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, WorkerStatus> > >::at(unsigned char const&) const at c:\users\user\.platformio\packages\toolchain-xtensa-esp32@8.4.0+2021r2-patch5\xtensa-esp32-elf\include\c++\8.4.0\bits/stl_map.h:548
+      (inlined by) Controller::handle_produced_work(std::map<unsigned char, WorkerStatus, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, WorkerStatus> > > const&) at bgeigiecast/controller.cpp:80
+  #8  0x400d72e4:0x3ffd10b0 in non-virtual thunk to Controller::handle_produced_work(std::map<unsigned char, WorkerStatus, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, WorkerStatus> > > const&) at ??:?
+  #9  0x4021ae76:0x3ffd10d0 in Handler::try_handle_work(HandlerStatus&, std::map<unsigned char, WorkerStatus, std::less<unsigned char>, std::allocator<std::pair<unsigned char const, WorkerStatus> > >&) at bgeigiecast/Handler.cpp:24
+  #10 0x400d3b19:0x3ffd10f0 in Aggregator::run() at bgeigiecast/Aggregator.cpp:64
+  #11 0x400d72fb:0x3ffd1130 in Controller::run() at bgeigiecast/controller.cpp:28
+  #12 0x400d7f5e:0x3ffd1150 in loop() at bgeigiecast/main.cpp:169
+  #13 0x400f2f59:0x3ffd1170 in loopTask(void*) at C:/Users/user/.platformio/packages/framework-arduinoespressif32/cores/esp32/main.cpp:50
+

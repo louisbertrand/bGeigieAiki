@@ -1,7 +1,7 @@
 //
 // Created by Jelle Bouwhuis on 12/24/19.
 //
-
+#include "debugger.h"
 #include <Aggregator.hpp>
 
 Aggregator::Aggregator() : report() {
@@ -77,5 +77,6 @@ void Aggregator::set_worker_active(uint8_t worker_id, bool active) {
 }
 
 void Aggregator::set_handler_active(uint8_t handler_id, bool active) {
+  DEBUG_PRINTLN("In Aggregator::set_handler_active(), calling handlers.at(handler_id)->set_active(active, report.handler_stats.at(handler_id))");
   handlers.at(handler_id)->set_active(active, report.handler_stats.at(handler_id));
 }
