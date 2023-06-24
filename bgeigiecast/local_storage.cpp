@@ -288,7 +288,10 @@ bool LocalStorage::clear() {
 }
 
 bool LocalStorage::activate(bool) {
+/*LBDEBUG*/DEBUG_PRINTLN("local_storage.cpp: Entering LocalStorage::activate()");
+/*LBDEBUG*/DEBUG_PRINTLN("local_storage.cpp: Calling _memory.begin()");
   _memory.begin(memory_name, true);
+/*LBDEBUG*/DEBUG_PRINTLN("local_storage.cpp: Getting __device_id");
   _device_id = _memory.getUShort(key_device_id, D_DEVICE_ID);
   if(_memory.getString(key_ap_password, _ap_password, CONFIG_VAL_MAX) == 0) {
     strcpy(_ap_password, D_ACCESS_POINT_PASSWORD);

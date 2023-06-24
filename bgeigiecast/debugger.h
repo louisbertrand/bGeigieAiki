@@ -8,8 +8,11 @@
 #endif
 
 #if ENABLE_DEBUG
+#ifdef ARDUINO_M5STACK_Core2
+#include <M5Core2.h>
+#else
 #include <Arduino.h>
-
+#endif
 #ifndef DEBUG_STREAM
 #define DEBUG_STREAM Serial
 #endif

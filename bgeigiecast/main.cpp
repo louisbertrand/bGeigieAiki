@@ -52,6 +52,7 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
 #ifdef ARDUINO_M5STACK_Core2
 #include "data_collector.h"
+#include "display.h"
 #else
 #include "bgeigie_connector.h"
 #include "mode_led.h"
@@ -80,7 +81,9 @@ ApiReporter api_reporter(config);
 AccessPoint access_point(config);
 
 // Report handlers
-#ifndef ARDUINO_M5STACK_Core2
+#ifdef ARDUINO_M5STACK_Core2
+Display display(config);
+#else
 ModeLED mode_led(config);
 #endif
 
@@ -137,8 +140,12 @@ FullReporter full_reporter;
 
 
 void setup() {
-  DEBUG_BEGIN(SERIAL_BAUD);
+#ifdef ARDUINO_M5STACK_Core2
+  M5.begin();
+#endif
 
+  DEBUG_BEGIN(SERIAL_BAUD);
+/*LBDEBUG*/DEBUG_PRINTLN("main.cpp: Entering setup()");
 #ifndef ARDUINO_M5STACK_Core2
   /// Hardware configurations
   // Start serial connection to bGeigie controller
@@ -168,16 +175,22 @@ void setup() {
 
   controller.register_handler(bluetooth_reporter, false);
   controller.register_handler(api_reporter, false);
+/*LBDEBUG*/DEBUG_PRINTLN("main.cpp: calling register_handler(config)");
   controller.register_handler(config, false);
 
 #ifndef ARDUINO_M5STACK_Core2  /// @todo register the output graphics display
   controller.register_supervisor(mode_led);
+#endif
+#ifdef ARDUINO_M5STACK_Core2
+/*LBDEBUG*/DEBUG_PRINTLN("main.cpp: calling register_supervisor(display)");
+  controller.register_supervisor(display);
 #endif
 #if DEBUG_FULL_REPORT
 #if ENABLE_DEBUG
   controller.register_supervisor(full_reporter);
 #endif
 #endif
+/*LBDEBUG*/DEBUG_PRINTLN("main.cpp: calling controller.setup_state_machine();");
   controller.setup_state_machine();
   DEBUG_PRINTF("millis=%d ", millis()); DEBUG_PRINTLN("Exiting main.setup()"); DEBUG_FLUSH();
 }
@@ -187,6 +200,9 @@ void loop() {
   controller.run();
 #ifndef ARDUINO_M5STACK_Core2  /// @todo refresh the output graphics display
   mode_led.loop();
+#endif
+#ifdef ARDUINO_M5STACK_Core2
+  display.loop();
 #endif
 }
 
